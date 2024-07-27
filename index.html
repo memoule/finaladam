@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Compte à Rebours</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@700&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Arial:wght@400&display=swap');
+
+        body {
+            font-family: 'Orbitron', sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #000;
+            margin: 0;
+            color: #FF0000; /* Rouge pour le compte à rebours */
+            font-size: 5vw; /* Taille dynamique du compte à rebours */
+            letter-spacing: 0.5vw; /* Espacement des lettres pour le compte à rebours */
+            overflow: hidden;
+            text-align: center;
+            position: relative;
+        }
+        #countdown {
+            font-family: 'Orbitron', sans-serif;
+        }
+        .fade-out {
+            opacity: 0;
+            transition: opacity 1s ease-in-out;
+        }
+        #messages {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            color: #000; /* Noir pour le texte, invisible sur fond noir */
+            font-size: 12px;
+            font-family: 'Arial', sans-serif; /* Changement de police pour les messages */
+            background-color: #000; /* Fond noir pour les messages, rendant le texte invisible */
+            padding: 5px;
+            border-radius: 3px;
+            z-index: 10;
+        }
+        #endMessage {
+            position: absolute;
+            bottom: 20px;
+            color: #FF0000; /* Rouge pour le message final */
+            font-family: 'Arial', sans-serif;
+            font-size: 2vw;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div id="countdown">
+        <span id="days"></span>
+        <span id="hours"></span>
+        <span id="minutes"></span>
+        <span id="seconds"></span>
+    </div>
+
+    <div id="messages">
+        <p>Voir YouTube memousmail</p>
+        <p>Voir le Google Drive de memousmail</p>
+        <p>Voir sur CodePen</p>
+    </div>
+
+    <div id="endMessage"></div>
+
+    <audio id="tickSound" src="https://github.com/memoule/tictac/blob/main/wall-clock-ticks-quartz-clock-25480.mp3" preload="auto"></audio>
+
+    <script>
+        const tickSound = document.getElementById('tickSound');
+        const endMessageElement = document.getElementById('endMessage');
+        const endMessageText = "Le temps n'est une illusion - Albert Einstein";
+        let messageIndex = 0;
+        let countdownInterval;
+
+        function updateCountdown() {
+            const endDate = new Date('July 27, 2024 15:01:45').getTime();
+            const now = new Date().getTime();
+            const timeLeft = endDate - now;
+
+            const days = String(Math.floor(timeLeft / (1000 * 60 * 60 * 24))).padStart(2, '0');
+            const hours = String(Math.floor((timeLeft % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60))).padStart(2, '0');
+            const minutes = String(Math.floor((timeLeft % (1000 * 60 * 60)) / (1000 * 60))).padStart(2, '0');
+            const seconds = String(Math.floor((timeLeft % (1000 * 60)) / 1000)).padStart(2, '0');
+
+            document.getElementById('days').textContent = days;
+            document.getElementById('hours').textContent = ':' + hours;
+            document.getElementById('minutes').textContent = ':' + minutes;
+            document.getElementById('seconds').textContent = ':' + seconds;
+
+            if (timeLeft < 0) {
+                clearInterval(countdownInterval);
+                document.getElementById('countdown').classList.add('fade-out');
+                tickSound.pause();
+                tickSound.currentTime = 0;
+                endMessageElement.style.display = 'block';
+                document.addEventListener('keydown', displayEndMessage);
+            } else {
+                if (tickSound.paused) {
+                    tickSound.play();
+                } else {
+                    tickSound.currentTime = 0;
+                }
+            }
+        }
+
+        function displayEndMessage() {
+            if (messageIndex < endMessageText.length) {
+                endMessageElement.textContent += endMessageText[messageIndex];
+                messageIndex++;
+            }
+        }
+
+        document.addEventListener('click', () => {
+            if (tickSound.paused) {
+                tickSound.play();
+            }
+        });
+
+        countdownInterval = setInterval(updateCountdown, 1000);
+        updateCountdown();
+    </script>
+</body>
+</html>
